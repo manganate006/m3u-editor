@@ -55,3 +55,6 @@ docs/provider-profiles-plan.md
 *.log
 docker-compose.ci-test.yml
 docker-compose.local.yml
+
+# Claude Code
+CLAUDE.md

@@ -529,11 +529,15 @@ class VodResource extends Resource
             Filter::make('has_audio_languages')
                 ->label('Has audio language info')
                 ->toggle()
-                ->query(fn (Builder $query) => $query->whereNotNull('audio_scanned_at')),
+                ->query(fn (Builder $query) => $query->whereNotNull('audio_languages')),
             Filter::make('missing_audio_scan')
                 ->label('Not scanned for audio')
                 ->toggle()
                 ->query(fn (Builder $query) => $query->whereNull('audio_scanned_at')),
+            Filter::make('scanned_no_languages')
+                ->label('Scanned but no languages found')
+                ->toggle()
+                ->query(fn (Builder $query) => $query->whereNotNull('audio_scanned_at')->whereNull('audio_languages')),
         ];
     }
 
