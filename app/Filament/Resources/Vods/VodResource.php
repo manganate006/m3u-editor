@@ -505,6 +505,7 @@ class VodResource extends Resource
                 }),
             SelectFilter::make('audio_language')
                 ->label('Audio Language')
+                ->multiple()
                 ->options(function () {
                     // Get all unique audio languages from the database
                     $languages = Channel::where('is_vod', true)
@@ -519,9 +520,13 @@ class VodResource extends Resource
                     return $languages;
                 })
                 ->query(function (Builder $query, array $data) {
-                    if (! empty($data['value'])) {
-                        // PostgreSQL JSON contains
-                        $query->whereRaw("audio_languages::jsonb ? ?", [$data['value']]);
+                    if (! empty($data['values'])) {
+                        // PostgreSQL JSON contains - use ?? to escape the ? operator
+                        $query->where(function (Builder $q) use ($data) {
+                            foreach ($data['values'] as $lang) {
+                                $q->orWhereRaw("audio_languages::jsonb ?? ?", [$lang]);
+                            }
+                        });
                     }
                 })
                 ->searchable()
