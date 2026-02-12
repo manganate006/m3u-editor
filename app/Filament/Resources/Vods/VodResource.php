@@ -521,10 +521,11 @@ class VodResource extends Resource
                 })
                 ->query(function (Builder $query, array $data) {
                     if (! empty($data['values'])) {
-                        // PostgreSQL JSON contains - use ?? to escape the ? operator
+                        // PostgreSQL JSON contains - use @> operator
                         $query->where(function (Builder $q) use ($data) {
                             foreach ($data['values'] as $lang) {
-                                $q->orWhereRaw("audio_languages::jsonb ?? ?", [$lang]);
+                                // Check if array contains the language value
+                                $q->orWhereRaw("audio_languages::jsonb @> ?::jsonb", [json_encode($lang)]);
                             }
                         });
                     }
